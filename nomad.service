@@ -1,8 +1,6 @@
 [Unit]
 Description=Nomad
 Documentation=https://www.nomadproject.io
-After=consul.service
-Requires=consul.service
 
 [Service]
 ExecStartPre=/bin/bash -c "/bin/systemctl set-environment PRIVATE_IP=$(ip addr show enp0s8 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/')"

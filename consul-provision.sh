@@ -2,7 +2,7 @@ NOMAD_VERSION="1.0.6"
 
 echo "Installing dependencies ..."
 sudo apt-get update
-sudo apt-get install -y unzip curl
+sudo apt-get install -y unzip curl jq
 echo "Determining Consul version to install ..."
 CHECKPOINT_URL="https://checkpoint-api.hashicorp.com/v1/check"
 echo "Fetching Consul version ${NOMAD_VERSION} ..."
