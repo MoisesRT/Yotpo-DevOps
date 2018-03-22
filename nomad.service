@@ -1,0 +1,15 @@
+[Unit]
+Description=Nomad
+Documentation=https://www.nomadproject.io
+After=consul.service
+Requires=consul.service
+
+[Service]
+ExecStartPre=/bin/bash -c "/bin/systemctl set-environment PRIVATE_IP=$(ip addr show enp0s8 | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/')"
+ExecStartPre=/bin/bash -c "/bin/systemctl set-environment SERVER_NAME=$(hostname)"
+ExecStart=/usr/bin/nomad agent -node=${SERVER_NAME} -bind=${PRIVATE_IP} -config=/etc/nomad.hcl
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target
