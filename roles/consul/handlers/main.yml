@@ -1,0 +1,13 @@
+---
+# handlers file for consul
+
+- name: restart consul service
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: consul
+
+- name: restart networking service
+  systemd:
+    state: restarted
+    name: networking

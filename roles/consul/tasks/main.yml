@@ -1,0 +1,33 @@
+---
+# tasks file for consul
+- name: download consul file
+  get_url:
+    url: "{{ consul_file_url }}"
+    dest: "/tmp/consul.zip"
+  register: download_consul
+
+- name: unzip consul
+  unarchive:
+    src: "/tmp/consul.zip"
+    dest: "/usr/bin/"
+    remote_src: yes
+    mode: 0755
+  when: download_consul.changed
+
+- name: create consul dir
+  file:
+    path: /etc/consul.d
+    state: directory
+    mode: 0755
+
+- name: generate the consul service
+  template:
+    src: consul.service.j2
+    dest: /etc/systemd/system/consul.service
+  notify: restart consul service
+
+- name: add the consul dns
+  copy:
+    src: resolv.config
+    dest: /etc/resolvconf/resolv.conf.d/tail
+  notify: restart networking service

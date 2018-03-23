@@ -1,0 +1,17 @@
+- hosts: all
+  become: yes
+  vars:
+    nomad_config: "client"
+  pre_tasks:
+    - name: install unzip
+      apt:
+        name: unzip
+  roles:
+    - docker.ubuntu
+    - nomad
+  tasks:
+    - name: add the vagrant user to the docker group
+      user:
+        name: vagrant
+        groups: docker
+        append: yes

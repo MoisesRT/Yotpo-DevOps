@@ -1,0 +1,45 @@
+---
+# tasks file for nomad
+- name: download nomad file
+  get_url:
+    url: "{{ nomad_file_url }}"
+    dest: "/tmp/nomad.zip"
+  register: download_nomad
+
+- name: unzip nomad
+  unarchive:
+    src: "/tmp/nomad.zip"
+    dest: "/usr/bin/"
+    remote_src: yes
+    mode: 0755
+  when: download_nomad.changed
+
+- name: copy the nomad hcl
+  copy:
+    src: "nomad-{{ nomad_config }}.hcl"
+    dest: /etc/nomad.hcl
+    mode: 0644
+
+- name: create nomad dir
+  file:
+    path: /etc/nomad.d
+    state: directory
+    mode: 0755
+
+- name: generate the nomad service
+  template:
+    src: nomad.service.j2
+    dest: /etc/systemd/system/nomad.service
+  notify: restart nomad service
+
+- name: copy the redis hcl
+  copy:
+    src: "redis.hcl"
+    dest: /tmp/redis.hcl
+    mode: 0644
+  when: nomad_config == "client"
+  register: redis
+
+- name: run the redis service
+  command: "/usr/bin/nomad run -address http://172.20.20.10:4646 /tmp/redis.hcl"
+  when: redis.changed

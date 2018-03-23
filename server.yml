@@ -1,0 +1,11 @@
+- hosts: all
+  become: yes
+  vars:
+    nomad_config: "server"
+  pre_tasks:
+    - name: install unzip
+      apt:
+        name: unzip
+  roles:
+    - consul
+    - nomad

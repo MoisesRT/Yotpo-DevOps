@@ -1,0 +1,12 @@
+[Unit]
+Description=Consul
+Documentation=https://www.consul.io
+
+[Service]
+ExecStart=/usr/bin/consul agent -server -ui -bootstrap-expect=3 -data-dir=/tmp/consul -node={{ ansible_hostname }}    \
+          -client {{ ansible_enp0s8.ipv4.address }} -bind={{ ansible_enp0s8.ipv4.address }} -config-dir=/etc/consul.d \
+          -join 172.20.20.10 -dns-port=53 -recursor 8.8.8.8
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target

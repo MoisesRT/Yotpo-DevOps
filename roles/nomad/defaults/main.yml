@@ -1,0 +1,5 @@
+---
+# defaults file for nomad
+
+nomad_version: "0.7.1"
+nomad_file_url: "https://releases.hashicorp.com/nomad/{{ nomad_version }}/nomad_{{ nomad_version }}_linux_amd64.zip"

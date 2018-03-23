@@ -1,0 +1,12 @@
+[Unit]
+Description=Nomad
+Documentation=https://www.nomadproject.io
+
+[Service]
+ExecStart=/usr/bin/nomad agent -node={{ ansible_hostname }} -bind={{ ansible_enp0s8.ipv4.address }} \
+          -network-interface enp0s8 -config=/etc/nomad.hcl
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target
