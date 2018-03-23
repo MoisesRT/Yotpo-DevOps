@@ -1,0 +1,18 @@
+---
+# tasks file for nomad client
+- name: Wait for port 4646
+  wait_for:
+    port: 4646
+    host: "{{ ansible_enp0s8.ipv4.address }}"
+    delay: 30
+
+- name: copy the redis hcl
+  copy:
+    src: "redis.hcl"
+    dest: /tmp/redis.hcl
+    mode: 0644
+  register: redis
+
+- name: run the redis service
+  command: "/usr/bin/nomad run -address http://172.20.20.10:4646 /tmp/redis.hcl"
+  when: redis.changed
