@@ -19,6 +19,7 @@
     src: "nomad-{{ nomad_config }}.hcl"
     dest: /etc/nomad.hcl
     mode: 0644
+  notify: restart nomad service
 
 - name: create nomad dir
   file:

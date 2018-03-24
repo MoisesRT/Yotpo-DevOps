@@ -1,8 +1,7 @@
-job "redis" {
+job "ping" {
   # This job is a "service" -- a single "instance" of it
   # - (https://www.nomadproject.io/docs/jobspec/schedulers.html)
   type = "service"
-
   # It's annoying that I _have_ to define this since it's the default...
   datacenters = [
     "dc1"]
@@ -11,30 +10,26 @@ job "redis" {
   # Useful if you need to ensure "sidecars" are located near one another
   #constraint {}
 
-  group "redis" {
+  group "ping" {
     count = 1
 
     # Getting down to brass-tacks here -- what is actually to be run
-    task "redis" {
+    task "ping" {
       # It's a docker container
-      driver = "docker"
+      driver = "exec"
 
       # Here's the docker configuration(s)
       config {
-        image = "redis:3.2.11"
-        port_map {
-          redis_port = 6379
-        }
+        command = "bash"
+        args = ["-c","echo PING | nc $REDIS_HOST $REDIS_PORT"]
       }
-      resources {
-        network {
-          port "redis_port" {}
-        }
-      }
-
-      service {
-        name = "redis"
-        port = "redis_port"
+      template {
+        data = <<EOH
+        REDIS_HOST="{{ range service "redis" }}{{ .Address }}{{ end }}"
+        REDIS_PORT="{{ range service "redis" }}{{ .Port }}{{ end }}"
+        EOH
+        destination = "/tmp/file.env"
+        env = true
       }
     }
   }

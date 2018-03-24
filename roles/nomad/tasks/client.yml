@@ -16,3 +16,14 @@
 - name: run the redis service
   command: "/usr/bin/nomad run -address http://172.20.20.10:4646 /tmp/redis.hcl"
   when: redis.changed
+
+- name: copy the ping hcl
+  copy:
+    src: "ping.hcl"
+    dest: /tmp/ping.hcl
+    mode: 0644
+  register: ping
+
+- name: run the ping service
+  command: "/usr/bin/nomad run -address http://172.20.20.10:4646 /tmp/ping.hcl"
+  when: ping.changed
